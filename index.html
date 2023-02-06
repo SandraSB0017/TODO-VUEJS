@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css">
+</head>
+<body>
+<div class="container">
+    <div id="app">
+        <div class="header-list">
+            <h1>ToDoList</h1>
+            <supprimer @removeall="supprimerTout" v-if="todos != 0"></supprimer>
+        </div>
+       
+         <div class="form">
+            <ajout @nouvellenote="AjouterTodo"></ajout>
+        </div>
+        <div class="list-item">
+             <note v-for="todo in todos" v-bind:content="todo" @removenote="supprimernote" @checknote="rayernote">
+               </note>
+            
+           
+        </div>
+    </div>
+</div>
+
+    <script>
+        const vm = Vue.createApp({
+            data(){
+                return{
+                    todos: []
+                }
+            },
+            methods:{
+                inverser(){
+                    this.todos.reverse();
+                },
+                AjouterTodo(message){
+                    this.todos.push(message);
+                },
+                supprimernote(todo){
+                    this.todos.splice(todo,1);
+                },
+                checknote(todo){
+                    this.todo.$('btn-archive').toggleClass('done', 'switch');
+                },
+                supprimerTout(todos){
+                    this.todos.splice(todos);
+                }
+            }
+        })
+        vm.component('note',{
+            props:['content'],
+            data(){
+                return{
+                    interne:''
+                }
+            },
+            methods: {
+                supprimernote(){
+                    this.$emit('removenote', this.interne);
+                },
+                checknote(){
+                    this.$emit('rayernote', this.interne)
+                }
+               
+            },
+            template: `<div class ="item">
+                    <p>{{content}}</p>
+                    <button class="btn-delete" @click="supprimernote">
+                        <i class="fas fa-trash-alt"></i> </button>
+                        <input type="checkbox" class="checkbox">
+                   
+                </div> `
+        });
+        vm.component('supprimer',{
+            props:[],
+            data(){
+                return{
+                    msgInterne:''
+                }
+            },
+            methods:{
+                supprimertout(){
+                    this.$emit('removeall',this.msgInterne)
+                }
+            },
+            template: `
+                        <button class="btn-deleteAll" @click="supprimertout">Tout supprimer</button>
+            `
+
+        })
+        vm.component('ajout',{
+            props:[],
+            emits:['nouvellenote'], //appel des evenements personnalisés
+            data(){
+                return{
+                    messageInterne:' '
+                }
+            },
+            methods:{
+                enregistrementNote(){
+                    this.$emit('nouvellenote', this.messageInterne); //faire remonter dans vm le messageInterne
+                    this.messageInterne = '' 
+                }
+               
+            },
+            template: ` <input type="text" v-model="messageInterne"/>
+             <button @click="enregistrementNote" v-if="messageInterne != '' "> <i class="fas fa-plus"></i></button>` //appliquer la methode du component pour faire remonter dans la vm
+        }),
+       
+
+        
+        vm.mount('#app'); 
+    </script>
+     <!-- <button class="btn-archive">
+             <i class="fas fa-check-circle" @click="checknote"></i>
+         </button> -->
+</body>
+</html>
