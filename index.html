@@ -46,9 +46,6 @@
                 supprimernote(todo){
                     this.todos.splice(todo,1);
                 },
-                checknote(todo){
-                    this.todo.$('btn-archive').toggleClass('done', 'switch');
-                },
                 supprimerTout(todos){
                     this.todos.splice(todos);
                 }
@@ -64,11 +61,7 @@
             methods: {
                 supprimernote(){
                     this.$emit('removenote', this.interne);
-                },
-                checknote(){
-                    this.$emit('rayernote', this.interne)
-                }
-               
+                }, 
             },
             template: `<div class ="item">
                     <p>{{content}}</p>
